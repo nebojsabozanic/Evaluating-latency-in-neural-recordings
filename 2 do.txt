@@ -1,0 +1,9 @@
+add victor purpura (mail Thomas)
+
+run
+
+check SPIKE-distance special cases
+
+check Nawrot paper (not sure if I'm following the right procedure)
+
+potentially add newly proposed versions from Eero
