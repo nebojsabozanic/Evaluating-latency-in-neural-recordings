@@ -1,0 +1,20 @@
+M-file latency:
+
+there are always two spike trains.
+
+The first spike train is Poisson with fixed lambda.
+
+3 different comparisons:
+
+the second spike train is:
+
+1. the same as the first one.
+
+2. completely new Poisson train.
+
+3. generated from the fist st which included jitter, deletion and addition.
+
+(the 3rd should be presented as a mesh, surf... whatsoever, where 
+
+ 
+
