@@ -3,29 +3,29 @@ function b = latency()
 % April Fool 2015
 % @Nebojsa @Mario @Thomas d_KreuzLab_b
 
-    nStats = 10;
-    nSpikes = 1000;
+    nStats = 2;
+    nSpikes = 10;
 
-    T = 100;
+    T = 10;
 
     %rate is defined as nSpikes/T
 
     %modify to a point Spike_distance in order to cover the edge
 %     Tau = [-T+0.01 : .01 : T-0.01];
-    Tau = [-T/2 : .01 : T/2];
+    Tau = -T/2 : .01 : T/2;
 
     T_d = zeros(1, numel(Tau));
 
-    cases = ['same', 'different', 'same with some noise'];
+    cases = {'same', 'different', 'same with some noise'};
 
-    doit = cases(3);
+    doit = cases{1};
 
     for i = 1 : nStats
         i
        % spikes{1} = poissonSpikeGen(nSpikes/T, T); 
         spikes{1} = poissonGenKreuz(nSpikes, T);
 
-            switch doit
+        switch doit
 
             case cases(1)
 

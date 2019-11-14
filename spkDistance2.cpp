@@ -17,6 +17,14 @@ double abso(double a) {
     return (a > 0) ? a : -a;
 }
 
+template <class T> const T& min (const T& a, const T& b) {
+  return !(b<a)?a:b;     // or: return !comp(b,a)?a:b; for version (2)
+}
+
+template <class T> const T& max (const T& a, const T& b) {
+  return !(b>a)?a:b;
+}
+
 void mexFunction(int nlhs, mxArray *plhs[],
         int nrhs, const mxArray *prhs[])
         
@@ -77,13 +85,13 @@ void mexFunction(int nlhs, mxArray *plhs[],
                         /* ######################################## Before time tBeg ############################################# */
                         for(lcc = 0; lcc < 2; ++lcc) {
                             
-                            if (nSpikes[lcc] > 1)
+                            if (nSpikes[lcc] > 1) {
                                 while (t >= spikes[lcc][spikeCount[lcc]+1] && spikeCount[lcc] < nSpikes[lcc]-1)
                                     ++spikeCount[lcc];
-                            
+                            }
                             if (t >= spikes[lcc][spikeCount[lcc]])
                                 isiRight[lcc] = ((spikeCount[lcc] < nSpikes[lcc]-1) ? spikes[lcc][spikeCount[lcc]+1] : rEnd[lcc])- spikes[lcc][spikeCount[lcc]];
-                            else
+                            else {
                                 isiRight[lcc] = max(spikes[lcc][min(1, nSpikes[lcc-1])] - spikes[lcc][0], spikes[lcc][0] - rBeg[lcc]);
 								
                                 while (abso(spikes[lcc][spikeCount[lcc]] - spikes[1-lcc][min(nnindx[lcc]+1, nSpikes[1-lcc]-1)]) < abso(spikes[lcc][spikeCount[lcc]] - spikes[1-lcc][nnindx[lcc]]))
@@ -113,6 +121,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
                                         if (nearestFuture[lcc] > abso(spikes[lcc][spikeCount[lcc]+1] - rBeg[1-lcc]))
                                             nearestFuture[lcc] = abso(spikes[lcc][spikeCount[lcc]+1] - rBeg[1-lcc]);
                                 }
+                            }
                         }
                         
                         for(cc = 0; cc < 2; ++cc) {
@@ -126,11 +135,12 @@ void mexFunction(int nlhs, mxArray *plhs[],
 									if (nSpikes[cc] > 1)
 										S[cc] *= (spikes[cc][0] - rBeg[cc])/(spikes[cc][1] - spikes[cc][0]);
                             
-                            if (spikes[cc][spikeCount[cc]] <= t)
+                            if (spikes[cc][spikeCount[cc]] <= t) {
                                 if (spikeCount[cc] < nSpikes[cc] - 1)
                                     ++spikeCount[cc];
                                 else
                                     flag[cc] = 1;
+                            }
                         }
                         
                         sRight = 2 * (S[0] * isiRight[1] + S[1] * isiRight[0]) / ((isiRight[0] + isiRight[1])*(isiRight[0] + isiRight[1])); /*fix t- for conor*/
@@ -158,8 +168,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
                                             cc = 0;
                                         else
                                             cc = 1;
-                                    }
-                                     
+                                    } 
                                 }
                                 if (spikeCount[cc] == nSpikes[cc]-1)
                                     flag[cc] = 1;
@@ -173,7 +182,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
                                     for(lcc = 0; lcc < 2; ++lcc) {
                                         if (spikeCount[lcc] < nSpikes[lcc]-1)
                                             isiRight[lcc] = spikes[lcc][spikeCount[lcc]+1] - spikes[lcc][spikeCount[lcc]];
-                                        else
+                                        else {
 											if (nSpikes[lcc] > 1)
 												isiRight[lcc] = max(rEnd[lcc] - spikes[lcc][nSpikes[lcc]-1], spikes[lcc][nSpikes[lcc]-1] - spikes[lcc][nSpikes[lcc]-2]);
 											else
@@ -195,6 +204,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
                                             if (nnindx[lcc] == 0)
                                                 if (nearestFuture[lcc] > abso(spikes[lcc][spikeCount[lcc]] - rBeg[1-lcc]))
                                                     nearestFuture[lcc] = abso(spikes[lcc][spikeCount[lcc]] - rBeg[1-lcc]);
+                                        }
                                     }
                                     
                                     S[0] = 0;
@@ -214,7 +224,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
                                     
                                     if (spikeCount[cc] < nSpikes[cc]-1)
                                         isiRight[cc] = spikes[cc][spikeCount[cc]+1] - spikes[cc][spikeCount[cc]];
-                                    else  
+                                    else {
 										if (nSpikes[cc] > 1)
 											isiRight[cc] = max(rEnd[cc] - spikes[cc][nSpikes[cc]-1], spikes[cc][nSpikes[cc]-1] - spikes[cc][nSpikes[cc]-2]);
 										else
@@ -246,7 +256,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
                                             if (spikeCount[1-cc] < nSpikes[1-cc]-1 && spikeCount[1-cc] > 0) 
                                                  S[1-cc] = (nearestPrevious[1-cc] * (spikes[1-cc][spikeCount[1-cc]+1] - t) + nearestFuture[1-cc]*(t - (spikes[1-cc][spikeCount[1-cc]])))/isiLeft[1-cc];
                                             }
-                                        else
+                                        else {
                                             if (nSpikes[1-cc] > 1)
                                                 S[1-cc] = (nearestPrevious[1-cc] * (spikes[1-cc][spikeCount[1-cc]] - t) + nearestFuture[1-cc]*(t - ((spikeCount[1-cc] > 0) ? spikes[1-cc][spikeCount[1-cc]-1] : rBeg[1-cc])))/isiLeft[1-cc];
                                             
@@ -263,9 +273,10 @@ void mexFunction(int nlhs, mxArray *plhs[],
                                              
                                             sRight = 2 * (S[0] * isiRight[1] + S[1] * isiRight[0]) / ((isiRight[0] + isiRight[1])*(isiRight[0] + isiRight[1]));
                                             /*mexPrintf("%f\n", sRight);*/
+                                        }
+                                    }
                                 }
                             }
-                            
                         }
                         
                         /* ######################################## After time tEnd ############################################# */
@@ -278,12 +289,12 @@ void mexFunction(int nlhs, mxArray *plhs[],
                         isiLeft[0] = isiRight[0];
                         isiLeft[1] = isiRight[1];
                         
-                        for(cc = 0; cc < 2; ++cc)
+                        for(cc = 0; cc < 2; ++cc) {
                             if (spikes[cc][spikeCount[cc]] < t) {
                                 if (spikeCount[cc] < nSpikes[cc]-1)
                                     S[cc] = (nearestPrevious[cc] * (spikes[cc][spikeCount[cc]+1] - t) + nearestFuture[cc]*(t - (spikes[cc][spikeCount[cc]])))/isiLeft[cc];
                             }
-                            else
+                            else {
                                 if ((nSpikes[cc] > 1) && (spikeCount[cc] == nSpikes[cc]-1))
                                     S[cc] = (nearestPrevious[cc] * (spikes[cc][spikeCount[cc]] - t) + nearestFuture[cc]*(t - ((spikeCount[1-cc] > 0) ? spikes[1-cc][spikeCount[1-cc]-1] : rBeg[1-cc])))/isiLeft[cc];
                         
@@ -292,7 +303,8 @@ void mexFunction(int nlhs, mxArray *plhs[],
                                 spkDist[trainCount[0]*(trainCount[0]+1)/2 + trainCount[1]-1] = spkDist[trainCount[0]*(trainCount[0]+1)/2 + trainCount[1]-1] + (sLeft + sRight)/2 * (t - t_prev);
                                 
                                 spkDist[trainCount[0]*(trainCount[0]+1)/2 + trainCount[1]-1] = spkDist[trainCount[0]*(trainCount[0]+1)/2 + trainCount[1]-1]/(*tEnd - *tBeg);
-                                
+                            }
+                        }       
                     }
                 }
             }
