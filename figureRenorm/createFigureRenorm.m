@@ -12,9 +12,9 @@ for indx = 1 : numel(latency)
     pearCorr_temp = corrcoef(binnedTrains{1}, binnedTrains{2}); 
     pearCorr(indx) = pearCorr_temp(1,2); % since corrcoef returns [2x2]...
     % calculate SPIKE-distance
-    spkDist(indx) = rand(1); %spkDist_mex(trains);
+    spkDist(indx) = spkDist_mex(trains, max(0, latency(indx)), min(duration, duration+latency(indx)), [0, latency(indx)], [duration, duration+latency(indx)]);
     % calculate Victor-Purpura distance
-    vicPurDist(indx) = rand(1); %vicPurDist_mex(trains);
+    vicPurDist(indx) = SPIKY_Victor_MEX(trains{1}, trains{2}, 10);
 end
 % plot original
 figure, plot(latency, pearCorr, latency, spkDist, latency, vicPurDist, 'LineWidth', 4); %6

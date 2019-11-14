@@ -4,7 +4,7 @@ function b = latency()
 % @Nebojsa @Mario @Thomas d_KreuzLab_b
 
     nStats = 2;
-    nSpikes = 10;
+    nSpikes = 100;
 
     T = 10;
 
@@ -64,6 +64,7 @@ function b = latency()
 
             %save test.mat spikes Tau count
             temp =  spkDistance2(spikes, max(0, Tau(count)), min(T, T+Tau(count)), [0, Tau(count)], [T, T+Tau(count)]); 
+            %temp = 0
             %if isnan(temp) || temp > 1 || temp < 0
              %   disp('error') %fix for one point%
             %else

@@ -4,8 +4,8 @@ function b = latency_cross(nBin, noiseLevelj)
 % April Fool 2015
 % @Nebojsa @Mario @Thomas d_KreuzLab_b
 
-    nStats = 10;
-    nSpikes = 100;
+    nStats = 100;
+    nSpikes = 1000;
 
     T = 100;
     
@@ -88,7 +88,7 @@ function b = latency_cross(nBin, noiseLevelj)
             psth{1} = histc(spikes{1}, max(0, Tau(count)) : tauStep : min(T, T+Tau(count)));
             psth{2} = histc(spikes{2}, max(0, Tau(count)) : tauStep : min(T, T+Tau(count))); %tauStep
             R = corrcoef(psth{1}(1:end-1), psth{2}(1:end-1));
-            vc = 0; %SPIKY_Victor_MEX(single(spikes{1}), single(spikes{2}), single(10)); %put as an argument 100
+            vc = SPIKY_Victor_MEX(spikes{1}, spikes{2}, 100); %put as an argument 100
             
             
             C_c(count) = R(1,2);
@@ -97,9 +97,9 @@ function b = latency_cross(nBin, noiseLevelj)
             
         end
     
-        T_d = T_d + S_d;
-        Tc_d = Tc_d + C_c;
-        Tv_d = Tv_d + V_c;
+        T_d = T_d + S_d; %make a matrix
+        Tc_d = Tc_d + C_c; %make a matrix
+        Tv_d = Tv_d + V_c; %make a matrix
     end
 
     % hold on,
@@ -111,10 +111,9 @@ function b = latency_cross(nBin, noiseLevelj)
 %     title(str2num(nSpikes/tauStep));
     %size(T_d);
     %b = [mean(T_d./nStats) mean(Tc_d./nStats); std(T_d./nStats) std(Tc_d./nStats)] 
-    b(1) = min(normT_d);
-    b(2) = min(normTc_d); %change 501 into the half of all
-    b(3) = min(normTv_d);
-    
+    b(1) = normT_d(end/2+1/2);
+    b(2) = normTc_d(end/2+1/2);
+    b(3) = normTv_d(end/2+1/2);
 end
 
 function spikes = poissonGenKreuz(nSpikes, T)
